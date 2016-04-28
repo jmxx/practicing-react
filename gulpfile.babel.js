@@ -1,20 +1,22 @@
-var gulp = require('gulp')
-  , browserSync = require('browser-sync').create()
-  , browserify = require('browserify')
-  , babelify = require('babelify')
-  , source = require('vinyl-source-stream')
-  , stylus = require('gulp-stylus')
-  , postStylus = require('poststylus')
-  , sourcemaps = require('gulp-sourcemaps')
-  , lost = require('lost')
-  , autoprefixer = require('autoprefixer');
+'use strict';
 
-gulp.task('html', function() {
+import gulp         from 'gulp';
+import browserify   from 'browserify';
+import browserSync  from 'browser-sync';
+import babelify     from 'babelify';
+import source       from 'vinyl-source-stream';
+import stylus       from 'gulp-stylus';
+import postStylus   from 'poststylus';
+import sourcemaps   from 'gulp-sourcemaps';
+import lost         from 'lost';
+import autoprefixer from 'autoprefixer';
+
+gulp.task('html', () => {
   return gulp.src('./src/index.html')
     .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('stylus', function () {
+gulp.task('stylus', () => {
   return gulp.src('./src/styl/app.styl')
     .pipe(sourcemaps.init())
     .pipe(stylus({
@@ -27,7 +29,7 @@ gulp.task('stylus', function () {
     .pipe(browserSync.stream());
 });
 
-gulp.task('es6:react', function () {
+gulp.task('es6:react', () => {
   return browserify({
     entries: './src/js/index.jsx',
     extensions: ['.jsx'],
@@ -39,21 +41,21 @@ gulp.task('es6:react', function () {
     .pipe(gulp.dest('./dist/js'));
 });
 
-gulp.task('serve', function () {
+gulp.task('serve', () => {
   browserSync.init({
     server: './dist'
   });
 });
 
-gulp.task('watch:stylus', function () {
+gulp.task('watch:stylus', () => {
   gulp.watch('./src/styl/**/*.styl', gulp.series('stylus'));
 });
 
-gulp.task('watch:html', function () {
+gulp.task('watch:html', () => {
   gulp.watch('./src/**/*.html', gulp.series('html', browserSync.reload));
 });
 
-gulp.task('watch:es6', function () {
+gulp.task('watch:es6', () => {
   gulp.watch('./src/js/**/*.jsx', gulp.series('es6:react', browserSync.reload));
 });
 
