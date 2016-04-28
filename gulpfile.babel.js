@@ -41,24 +41,30 @@ gulp.task('es6:react', () => {
     .pipe(gulp.dest('./dist/js'));
 });
 
-gulp.task('serve', () => {
+gulp.task('serve', (done) => {
   browserSync.init({
     server: './dist'
-  });
+  }, done);
 });
 
 gulp.task('watch:stylus', () => {
-  gulp.watch('./src/styl/**/*.styl', gulp.series('stylus'));
+  return gulp.watch('./src/styl/**/*.styl', gulp.series('stylus'));
 });
 
 gulp.task('watch:html', () => {
-  gulp.watch('./src/**/*.html', gulp.series('html', browserSync.reload));
+  return gulp.watch('./src/**/*.html', gulp.series('html', function reload(done) {
+    browserSync.reload();
+    done();
+  }));
 });
 
 gulp.task('watch:es6', () => {
-  gulp.watch('./src/js/**/*.jsx', gulp.series('es6:react', browserSync.reload));
+  return gulp.watch('./src/js/**/*.jsx', gulp.series('es6:react', function reload(done) {
+    browserSync.reload();
+    done();
+  }));
 });
 
-gulp.task('watch', gulp.parallel('serve', 'watch:html', 'watch:es6', 'watch:stylus'));
+gulp.task('watch', gulp.parallel('watch:html', 'watch:es6', 'watch:stylus'));
 
-gulp.task('default', gulp.series('html', 'stylus', 'es6:react', 'watch'));
+gulp.task('default', gulp.series('html', 'stylus', 'es6:react', 'serve', 'watch'));
