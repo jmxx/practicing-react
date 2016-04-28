@@ -11,6 +11,11 @@ import sourcemaps   from 'gulp-sourcemaps';
 import lost         from 'lost';
 import autoprefixer from 'autoprefixer';
 
+const onError = function (err) {
+  console.log(err.stack);
+  this.emit('end');
+};
+
 gulp.task('html', () => {
   return gulp.src('./src/index.html')
     .pipe(gulp.dest('./dist'));
@@ -24,6 +29,7 @@ gulp.task('stylus', () => {
         postStylus([lost, autoprefixer])
       ]
     }))
+    .on('error', onError)
     .pipe(sourcemaps.write())
     .pipe(gulp.dest('./dist/css'))
     .pipe(browserSync.stream());
@@ -37,6 +43,7 @@ gulp.task('es6:react', () => {
   })
     .transform(babelify)
     .bundle()
+    .on('error', onError)
     .pipe(source('app.js'))
     .pipe(gulp.dest('./dist/js'));
 });
