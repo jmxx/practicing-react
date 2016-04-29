@@ -8,6 +8,7 @@ import source       from 'vinyl-source-stream';
 import stylus       from 'gulp-stylus';
 import postStylus   from 'poststylus';
 import sourcemaps   from 'gulp-sourcemaps';
+import eslint       from 'gulp-eslint';
 import lost         from 'lost';
 import autoprefixer from 'autoprefixer';
 
@@ -48,6 +49,15 @@ gulp.task('es6:react', () => {
     .pipe(gulp.dest('./dist/js'));
 });
 
+gulp.task('es6:lint', () => {
+  return gulp.src('./src/js/**/*.jsx')
+    .pipe(eslint('.eslintrc'))
+    .pipe(eslint.format())
+    .on('error', onError);
+});
+
+gulp.task('es6', gulp.series('es6:lint', 'es6:react'));
+
 gulp.task('serve', (done) => {
   browserSync.init({
     server: './dist'
@@ -66,7 +76,7 @@ gulp.task('watch:html', () => {
 });
 
 gulp.task('watch:es6', () => {
-  return gulp.watch('./src/js/**/*.jsx', gulp.series('es6:react', function reload(done) {
+  return gulp.watch('./src/js/**/*.jsx', gulp.series('es6', function reload(done) {
     browserSync.reload();
     done();
   }));
